@@ -15,10 +15,17 @@ jobs:
           net user runneradmin Pass123456789! /add
           net localgroup administrators runneradmin /add
 
-      - name: Start Ngrok Tunnel
-        uses: alx361/ngrok-action@v1
-        with:
-          token: 3KPPikjdFCBQHvFklLkbQUmnaip_4keERrEFKjto1jC7e9y9r
-          port: 3389
-          proto: tcp
+      - name: Install and Start Ngrok
+        run: |
+          choco install ngrok -y
+          ngrok config add-authtoken 3KPPikjdFCBQHvFklLkbQUmnaip_4keERrEFKjto1jC7e9y9r
+          Start-Process powershell -ArgumentList '-NoExit -Command "ngrok tcp 3389"'
+          Start-Sleep -Seconds 10
+          $url = (Invoke-RestMethod -Uri "http://127.0.0.1:4040/api/tunnels").tunnels[0].public_url
+          Write-Host "=========================================="
+          Write-Host "IP KET NOI RDP CUA BAN LA: $url"
+          Write-Host "USER: runneradmin"
+          Write-Host "PASS: Pass123456789!"
+          Write-Host "=========================================="
+          Start-Sleep -Seconds 21600
           
